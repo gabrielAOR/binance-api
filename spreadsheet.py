@@ -1,4 +1,5 @@
 import os
+import json
 from datetime import datetime
 
 from custom_decorators import handle_http_error
@@ -12,14 +13,16 @@ from binancewallet import get_account_balances
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
 # The ID and range of a sample spreadsheet.
-SPREADSHEET_ID = os.getenv('sheet')
+SPREADSHEET_ID = os.getenv('SHEET')
+CREDENTIALS = json.loads(os.getenv('CREDENTIALS'))
+TOKEN = json.loads(os.getenv('TOKEN'))
 
 def get_balance():
   coins_values = get_account_balances()
   values = [[]]
   today = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
   values[0].append(today)
-  # Call the Sheets API
+  
   for coin, value in coins_values:
       values[0].append(round(value,2))
   print(values)
@@ -42,21 +45,20 @@ def nearest_empty_cell(creds,column='A'):
 def get_right_creds():
   creds = None
 
-  if os.path.exists("token.json"):
-    creds = Credentials.from_authorized_user_file("token.json", SCOPES)
+  if TOKEN:
+    creds = Credentials.from_authorized_user_info(TOKEN, SCOPES)
   # If there are no (valid) credentials available, let the user log in.
 
   if not creds or not creds.valid:
     if creds and creds.expired and creds.refresh_token:
       creds.refresh(Request())
     else:
-      flow = InstalledAppFlow.from_client_secrets_file(
-          "credentials.json", SCOPES
+      flow = InstalledAppFlow.from_client_config(
+          CREDENTIALS, SCOPES
       )
       creds = flow.run_local_server(port=0)
     # Save the credentials for the next run
-    with open("token.json", "w") as token:
-      token.write(creds.to_json())
+    os.environ['TOKEN'] = creds.to_json()
   return creds
 
 @handle_http_error
@@ -73,8 +75,6 @@ def update_transactions(creds):
 
 def main():
   credentials = get_right_creds()
-  # result = nearest_empty_cell(credentials) 
-  # print(result)
   update_transactions(credentials)
 
 
