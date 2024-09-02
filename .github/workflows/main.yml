@@ -28,5 +28,7 @@ jobs:
         SHEET_ID: ${{ secrets.SHEET_ID }} # This assumes 'sheet' is stored as a secret named 'SHEET_ID'
         BINANCE_API_KEY: ${{ secrets.API_KEY }}
         BINANCE_SECRET_KEY: ${{ secrets.SECRET_API_KEY }}
+        CREDENTIALS: ${{secrets.CREDENTIALS}}
+        TOKEN: ${{secrets.TOKEN}}
         # Add any other secrets or environment variables your script requires
       run: python spreadsheet.py
