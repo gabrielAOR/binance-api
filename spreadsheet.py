@@ -13,7 +13,7 @@ from binancewallet import get_account_balances
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
 # The ID and range of a sample spreadsheet.
-SPREADSHEET_ID = os.getenv('SHEET')
+SPREADSHEET_ID = os.getenv('SHEET_ID')
 CREDENTIALS = json.loads(os.getenv('CREDENTIALS'))
 TOKEN = json.loads(os.getenv('TOKEN'))
 
