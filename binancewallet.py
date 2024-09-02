@@ -1,7 +1,7 @@
 from binance.client import Client
 import os
-API_KEY  = os.getenv('BI_API_KEY')
-API_SECRET_KEY  = os.getenv('BI_SECRET_KEY')
+API_KEY  = os.getenv('API_KEY')
+API_SECRET_KEY  = os.getenv('SECRET_API_KEY')
 
 
 def get_account_balances():
