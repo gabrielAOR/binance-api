@@ -41,7 +41,11 @@ def nearest_empty_cell(creds,column='A'):
   )
   index = len(result.get("values", [])) + 1
   return f'{column}{index}'
-if CLIENT_ID and CLIENT_SECRET and REFRESH_TOKEN:
+
+def get_right_creds():
+  creds = None
+
+  if CLIENT_ID and CLIENT_SECRET and REFRESH_TOKEN:
     # Build the credentials using the refresh token
     creds_data = {
         "token": None,  # Initially no token
@@ -63,7 +67,7 @@ if CLIENT_ID and CLIENT_SECRET and REFRESH_TOKEN:
       raise Exception("Missing CLIENT_ID, CLIENT_SECRET, or REFRESH_TOKEN in environment variables.")
 
   return creds
-
+  
 @handle_http_error
 def update_transactions(creds):
   range = nearest_empty_cell(creds)
