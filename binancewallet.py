@@ -2,12 +2,12 @@ from binance.client import Client
 import os
 API_KEY  = os.getenv('API_KEY')
 API_SECRET_KEY  = os.getenv('SECRET_API_KEY')
-
+PROXY = os.getenv('PROXY')
 
 def get_account_balances():
  
  # Create a new client object to interact with the Binance API
- client = Client(API_KEY, API_SECRET_KEY)
+ client = Client(API_KEY, API_SECRET_KEY, {'http': PROXY, 'https': PROXY)
 
  # Retrieve the balances of all coins in the user’s Binance account
  account_balances = client.get_account()['balances']
