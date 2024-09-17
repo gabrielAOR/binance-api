@@ -15,7 +15,7 @@ SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 # The ID and range of a sample spreadsheet.
 SPREADSHEET_ID = os.getenv('SHEET_ID')
 CREDENTIALS = json.loads(os.getenv('CREDENTIALS'))
-TOKEN = json.loads(os.getenv('TOKEN'))
+TOKEN = json.loads(os.getenv('REFRESH_TOKEN'))
 
 def get_balance():
   coins_values = get_account_balances()
@@ -45,20 +45,27 @@ def nearest_empty_cell(creds,column='A'):
 def get_right_creds():
   creds = None
 
-  if TOKEN:
-    creds = Credentials.from_authorized_user_info(TOKEN, SCOPES)
-  # If there are no (valid) credentials available, let the user log in.
+  if CLIENT_ID and CLIENT_SECRET and REFRESH_TOKEN:
+      # Build the credentials using the refresh token
+      creds_data = {
+          "token": None,  # Initially no token
+          "refresh_token": REFRESH_TOKEN,
+          "token_uri": "https://oauth2.googleapis.com/token",
+          "client_id": CLIENT_ID,
+          "client_secret": CLIENT_SECRET,
+          "scopes": SCOPES
+      }
+    creds = Credentials.from_authorized_user_info(creds_data, SCOPES)
 
-  if not creds or not creds.valid:
+      # Refresh the credentials if they are expired
     if creds and creds.expired and creds.refresh_token:
-      creds.refresh(Request())
+        try:
+            creds.refresh(Request())
+        except RefreshError:
+            raise Exception("Failed to refresh access token. Check if the refresh token is valid.")
     else:
-      flow = InstalledAppFlow.from_client_config(
-          CREDENTIALS, SCOPES
-      )
-      creds = flow.run_local_server(port=0)
-    # Save the credentials for the next run
-    os.environ['TOKEN'] = creds.to_json()
+        raise Exception("Missing CLIENT_ID, CLIENT_SECRET, or REFRESH_TOKEN in environment variables.")
+
   return creds
 
 @handle_http_error
