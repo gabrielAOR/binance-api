@@ -47,26 +47,23 @@ def nearest_empty_cell(creds, column='A'):
 def get_right_creds():
     creds = None
 
-    if CLIENT_ID and CLIENT_SECRET and TOKEN:
-        # Build the credentials using the refresh token
-        creds_data = {
-            "token": None,  # Initially no token
-            "refresh_token": TOKEN,
-            "token_uri": "https://oauth2.googleapis.com/token",
-            "client_id": CLIENT_ID,
-            "client_secret": CLIENT_SECRET,
-            "scopes": SCOPES
-        }
-        creds = Credentials.from_authorized_user_info(creds_data, SCOPES)
+    # Build the credentials using the refresh token
+    creds_data = {
+        "token": None,  # Initially no token
+        "refresh_token": TOKEN,
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "client_id": CLIENT_ID,
+        "client_secret": CLIENT_SECRET,
+        "scopes": SCOPES
+    }
+    creds = Credentials.from_authorized_user_info(creds_data, SCOPES)
 
-        # Refresh the credentials if they are expired
-        if creds and creds.expired and creds.refresh_token:
-            try:
-                creds.refresh(Request())
-            except Exception as e:
-                raise Exception(f"Failed to refresh access token. {str(e)}")
-    else:
-        raise Exception("Missing CLIENT_ID, CLIENT_SECRET, or REFRESH_TOKEN in environment variables.")
+    # Refresh the credentials if they are expired
+    if creds and creds.expired and creds.refresh_token:
+        try:
+            creds.refresh(Request())
+        except Exception as e:
+            raise Exception(f"Failed to refresh access token. {str(e)}")
 
     return creds
 
