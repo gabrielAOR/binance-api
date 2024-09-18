@@ -15,7 +15,7 @@ SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 # The ID and range of a sample spreadsheet.
 SPREADSHEET_ID = os.getenv('SHEET_ID')
 CREDENTIALS = json.loads(os.getenv('CREDENTIALS'))
-TOKEN = json.loads(os.getenv('REFRESH_TOKEN'))
+TOKEN = os.getenv('REFRESH_TOKEN')
 
 def get_balance():
   coins_values = get_account_balances()
